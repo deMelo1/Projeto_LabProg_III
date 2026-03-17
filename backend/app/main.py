@@ -1,9 +1,18 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends, HTTPException
+from sqlalchemy.orm import Session
+
+from app.database import engine, get_db, Base
+from app.models import Ecoponto, Descarte  # noqa: F401
+from app.schemas import EcopontoCreate, EcopontoUpdate, EcopontoResponse
+from app import crud
+
+# cria as tabelas no banco se ainda nao existirem
+Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
     title="EcoFilter API",
     description="API do sistema EcoFilter para descarte correto de resíduos.",
-    version="0.1.0",
+    version="0.2.0",
 )
 
 
@@ -17,34 +26,43 @@ def healthcheck():
 
 # ---------- F1 – Ecopontos (pontos de coleta) ----------
 
-@app.get("/ecopontos", tags=["Ecopontos"])
-def listar_ecopontos():
+@app.get("/ecopontos", tags=["Ecopontos"], response_model=list[EcopontoResponse])
+def listar_ecopontos(db: Session = Depends(get_db)):
     """Lista todos os pontos de coleta cadastrados."""
-    return {"ecopontos": []}
+    return crud.listar_ecopontos(db)
 
 
-@app.get("/ecopontos/{ecoponto_id}", tags=["Ecopontos"])
-def obter_ecoponto(ecoponto_id: int):
+@app.get("/ecopontos/{ecoponto_id}", tags=["Ecopontos"], response_model=EcopontoResponse)
+def obter_ecoponto(ecoponto_id: int, db: Session = Depends(get_db)):
     """Retorna os dados de um ponto de coleta específico."""
-    return {"ecoponto_id": ecoponto_id, "mensagem": "endpoint em construção"}
+    ecoponto = crud.obter_ecoponto(db, ecoponto_id)
+    if not ecoponto:
+        raise HTTPException(status_code=404, detail="Ecoponto não encontrado")
+    return ecoponto
 
 
-@app.post("/ecopontos", tags=["Ecopontos"])
-def criar_ecoponto():
+@app.post("/ecopontos", tags=["Ecopontos"], response_model=EcopontoResponse, status_code=201)
+def criar_ecoponto(dados: EcopontoCreate, db: Session = Depends(get_db)):
     """Cadastra um novo ponto de coleta."""
-    return {"mensagem": "endpoint em construção"}
+    return crud.criar_ecoponto(db, dados)
 
 
-@app.put("/ecopontos/{ecoponto_id}", tags=["Ecopontos"])
-def atualizar_ecoponto(ecoponto_id: int):
+@app.put("/ecopontos/{ecoponto_id}", tags=["Ecopontos"], response_model=EcopontoResponse)
+def atualizar_ecoponto(ecoponto_id: int, dados: EcopontoUpdate, db: Session = Depends(get_db)):
     """Atualiza os dados de um ponto de coleta."""
-    return {"ecoponto_id": ecoponto_id, "mensagem": "endpoint em construção"}
+    ecoponto = crud.atualizar_ecoponto(db, ecoponto_id, dados)
+    if not ecoponto:
+        raise HTTPException(status_code=404, detail="Ecoponto não encontrado")
+    return ecoponto
 
 
 @app.delete("/ecopontos/{ecoponto_id}", tags=["Ecopontos"])
-def remover_ecoponto(ecoponto_id: int):
+def remover_ecoponto(ecoponto_id: int, db: Session = Depends(get_db)):
     """Remove um ponto de coleta."""
-    return {"ecoponto_id": ecoponto_id, "mensagem": "endpoint em construção"}
+    removido = crud.remover_ecoponto(db, ecoponto_id)
+    if not removido:
+        raise HTTPException(status_code=404, detail="Ecoponto não encontrado")
+    return {"detail": "Ecoponto removido com sucesso"}
 
 
 # ---------- F2 – Histórico e estatísticas de descarte ----------

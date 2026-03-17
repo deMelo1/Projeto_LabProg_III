@@ -69,9 +69,56 @@ O FastAPI gera documentação automática acessível em:
 
 ---
 
+## Banco de dados
+
+O backend se conecta ao PostgreSQL usando **SQLAlchemy** como ORM. A URL de conexão vem da variável de ambiente `DATABASE_URL`, definida no `docker-compose.yml`.
+
+As tabelas são criadas automaticamente quando a aplicação inicia (via `Base.metadata.create_all`).
+
+### Estrutura dos arquivos
+
+```
+app/
+├── main.py        # endpoints da API
+├── database.py    # conexão com o banco (engine, sessão)
+├── models.py      # modelos das tabelas (SQLAlchemy)
+├── schemas.py     # schemas de validação (Pydantic)
+└── crud.py        # funções de acesso ao banco
+```
+
+### Entidades
+
+**Ecoponto** (tabela `ecopontos`)
+
+| Campo          | Tipo         | Observação                |
+|----------------|--------------|---------------------------|
+| id             | Integer (PK) | autoincremento            |
+| nome           | String(150)  | obrigatório               |
+| endereco       | String(255)  | obrigatório               |
+| cidade         | String(100)  | obrigatório               |
+| estado         | String(2)    | UF, ex: "SP"              |
+| latitude       | Float        | opcional                  |
+| longitude      | Float        | opcional                  |
+| tipos_residuo  | String(255)  | separado por vírgula      |
+| descricao      | Text         | opcional                  |
+| criado_em      | DateTime     | preenchido automaticamente |
+
+**Descarte** (tabela `descartes`)
+
+| Campo          | Tipo         | Observação                 |
+|----------------|--------------|----------------------------|
+| id             | Integer (PK) | autoincremento             |
+| ecoponto_id    | Integer (FK) | referência para ecopontos  |
+| tipo_residuo   | String(50)   | obrigatório                |
+| descricao      | String(255)  | opcional                   |
+| data_descarte  | DateTime     | preenchido automaticamente |
+
+---
+
 ## Tecnologias
 
 - **FastAPI** — framework web
 - **Uvicorn** — servidor ASGI
 - **PostgreSQL** — banco de dados (via Docker)
+- **SQLAlchemy** — ORM
 - **psycopg2** — driver PostgreSQL para Python

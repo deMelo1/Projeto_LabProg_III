@@ -1,0 +1,97 @@
+{
+	"info": {
+		"name": "EcoFilter - Ecopontos",
+		"description": "Colecao de testes CRUD para a entidade Ecoponto da API EcoFilter.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "1. Criar Ecoponto",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"nome\": \"Ecoponto Vila Mariana\",\n  \"endereco\": \"Rua Domingos de Morais, 2100\",\n  \"cidade\": \"São Paulo\",\n  \"estado\": \"SP\",\n  \"latitude\": -23.5897,\n  \"longitude\": -46.6378,\n  \"tipos_residuo\": \"plastico,vidro,metal\",\n  \"descricao\": \"Ponto de coleta ao lado da estação de metrô.\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8000/ecopontos",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "8000",
+					"path": ["ecopontos"]
+				}
+			}
+		},
+		{
+			"name": "2. Listar Ecopontos",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/ecopontos",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "8000",
+					"path": ["ecopontos"]
+				}
+			}
+		},
+		{
+			"name": "3. Obter Ecoponto por ID",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/ecopontos/1",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "8000",
+					"path": ["ecopontos", "1"]
+				}
+			}
+		},
+		{
+			"name": "4. Atualizar Ecoponto",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"nome\": \"Ecoponto Vila Mariana (atualizado)\",\n  \"endereco\": \"Rua Domingos de Morais, 2100\",\n  \"cidade\": \"São Paulo\",\n  \"estado\": \"SP\",\n  \"latitude\": -23.5897,\n  \"longitude\": -46.6378,\n  \"tipos_residuo\": \"plastico,vidro,metal,papel\",\n  \"descricao\": \"Agora aceita papel também.\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8000/ecopontos/1",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "8000",
+					"path": ["ecopontos", "1"]
+				}
+			}
+		},
+		{
+			"name": "5. Remover Ecoponto",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/ecopontos/1",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "8000",
+					"path": ["ecopontos", "1"]
+				}
+			}
+		}
+	]
+}

@@ -61,6 +61,7 @@ O app mobile atua como interface de **captura da imagem** e **envio para a API**
 ├── backend/
 ├── frontend/
 ├── mobile/
+├── postman/
 ├── docker-compose.yml
 └── README.md
 ```
@@ -87,18 +88,23 @@ Acesse:
 docker compose down
 ```
 
-
-Acesse:
-
-- **Frontend:** http://localhost:5173 (React/Vite)
-- **Backend:** http://localhost:8000 (FastAPI)
-- **Healthcheck:** http://localhost:8000/health
-
 ---
 
-## Como derrubar o ambiente
+## Banco de dados
 
-```bash
-docker compose down
-```
+O sistema usa **PostgreSQL 16** rodando via Docker. As credenciais padrão estão no `docker-compose.yml`:
+
+- **Usuário:** eco
+- **Senha:** eco
+- **Database:** ecofilter
+- **Porta:** 5432
+
+As tabelas são criadas automaticamente pelo backend na primeira execução.
+
+### Entidades
+
+| Tabela       | Descrição                                    | Status       |
+|--------------|----------------------------------------------|--------------|
+| `ecopontos`  | Pontos de coleta seletiva                    | CRUD pronto  |
+| `descartes`  | Registros de descarte feitos pelo usuário    | Modelo criado |
 
