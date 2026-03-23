@@ -46,7 +46,8 @@ O app mobile atua como interface de **captura da imagem** e **envio para a API**
 
 ### Frontend (Web)
 
-- **React**
+- **React** com **React Router DOM**
+- **Vite** (dev server e build)
 
 ### Mobile
 
@@ -103,8 +104,35 @@ As tabelas são criadas automaticamente pelo backend na primeira execução.
 
 ### Entidades
 
-| Tabela       | Descrição                                    | Status       |
-|--------------|----------------------------------------------|--------------|
-| `ecopontos`  | Pontos de coleta seletiva                    | CRUD pronto  |
-| `descartes`  | Registros de descarte feitos pelo usuário    | Modelo criado |
+| Tabela      | Descrição                                 | Status        |
+| ----------- | ----------------------------------------- | ------------- |
+| `ecopontos` | Pontos de coleta seletiva                 | CRUD pronto   |
+| `descartes` | Registros de descarte feitos pelo usuário | Modelo criado |
 
+---
+
+## Frontend (Web)
+
+O frontend roda em **React** com **Vite** dentro de um container Docker, acessivel em `http://localhost:5173`.
+
+### Telas
+
+| Rota             | Tela          | Descricao                                                      |
+| ---------------- | ------------- | -------------------------------------------------------------- |
+| `/`              | Inicio        | Tela inicial com descricao das funcionalidades e status da API |
+| `/ecopontos`     | Ecopontos     | Lista os pontos de coleta cadastrados (dados vindos da API)    |
+| `/novo-ecoponto` | Novo Ecoponto | Formulario para cadastrar um novo ponto de coleta via API      |
+
+### Navegacao
+
+O sistema possui um **menu de navegacao (navbar)** no topo com links para todas as telas, permitindo o fluxo basico entre elas.
+
+### Consumo da API
+
+O frontend consome os seguintes endpoints do backend:
+
+| Endpoint     | Metodo | Tela que consome | Descricao                 |
+| ------------ | ------ | ---------------- | ------------------------- |
+| `/health`    | GET    | Inicio           | Exibe o status da API     |
+| `/ecopontos` | GET    | Ecopontos        | Lista todos os ecopontos  |
+| `/ecopontos` | POST   | Novo Ecoponto    | Cadastra um novo ecoponto |

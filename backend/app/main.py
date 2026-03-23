@@ -1,4 +1,5 @@
 from fastapi import FastAPI, Depends, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 
 from app.database import engine, get_db, Base
@@ -13,6 +14,13 @@ app = FastAPI(
     title="EcoFilter API",
     description="API do sistema EcoFilter para descarte correto de resíduos.",
     version="0.2.0",
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 
