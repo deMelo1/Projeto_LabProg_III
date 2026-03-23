@@ -123,7 +123,7 @@ O frontend roda em **React** com **Vite** dentro de um container Docker, acessiv
 | `/ecopontos`     | Ecopontos     | Lista os pontos de coleta cadastrados (dados vindos da API)    |
 | `/novo-ecoponto` | Novo Ecoponto | Formulario para cadastrar um novo ponto de coleta via API      |
 
-### Navegacao
+### Navegação
 
 O sistema possui um **menu de navegacao (navbar)** no topo com links para todas as telas, permitindo o fluxo basico entre elas.
 
