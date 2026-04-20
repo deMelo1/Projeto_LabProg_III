@@ -2,6 +2,8 @@ import { BrowserRouter, Routes, Route, NavLink } from 'react-router-dom'
 import Home from './pages/Home'
 import Ecopontos from './pages/Ecopontos'
 import NovoEcoponto from './pages/NovoEcoponto'
+import DetalheEcoponto from './pages/DetalheEcoponto'
+import EditarEcoponto from './pages/EditarEcoponto'
 import './App.css'
 
 function App() {
@@ -20,7 +22,9 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/ecopontos" element={<Ecopontos />} />
+          <Route path="/ecopontos/:id" element={<DetalheEcoponto />} />
           <Route path="/novo-ecoponto" element={<NovoEcoponto />} />
+          <Route path="/editar-ecoponto/:id" element={<EditarEcoponto />} />
         </Routes>
       </main>
     </BrowserRouter>

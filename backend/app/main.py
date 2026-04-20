@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends, HTTPException
+from fastapi import FastAPI, Depends, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 
@@ -35,9 +35,12 @@ def healthcheck():
 # ---------- F1 – Ecopontos (pontos de coleta) ----------
 
 @app.get("/ecopontos", tags=["Ecopontos"], response_model=list[EcopontoResponse])
-def listar_ecopontos(db: Session = Depends(get_db)):
-    """Lista todos os pontos de coleta cadastrados."""
-    return crud.listar_ecopontos(db)
+def listar_ecopontos(
+    tipo_residuo: str | None = Query(None, description="Filtrar por tipo de resíduo"),
+    db: Session = Depends(get_db),
+):
+    """Lista todos os pontos de coleta cadastrados. Aceita filtro por tipo de resíduo."""
+    return crud.listar_ecopontos(db, tipo_residuo=tipo_residuo)
 
 
 @app.get("/ecopontos/{ecoponto_id}", tags=["Ecopontos"], response_model=EcopontoResponse)

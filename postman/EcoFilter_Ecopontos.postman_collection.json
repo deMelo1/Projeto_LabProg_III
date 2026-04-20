@@ -43,6 +43,26 @@
 			}
 		},
 		{
+			"name": "2b. Filtrar Ecopontos por Tipo de Residuo",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/ecopontos?tipo_residuo=plastico",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "8000",
+					"path": ["ecopontos"],
+					"query": [
+						{
+							"key": "tipo_residuo",
+							"value": "plastico"
+						}
+					]
+				}
+			}
+		},
+		{
 			"name": "3. Obter Ecoponto por ID",
 			"request": {
 				"method": "GET",

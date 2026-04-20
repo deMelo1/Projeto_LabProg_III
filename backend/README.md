@@ -47,7 +47,7 @@ O FastAPI gera documentação automática acessível em:
 
 | Método | Rota                    | Descrição                                  |
 |--------|-------------------------|--------------------------------------------|
-| GET    | `/ecopontos`            | Lista todos os pontos de coleta            |
+| GET    | `/ecopontos`            | Lista pontos de coleta (aceita `?tipo_residuo=` para filtro) |
 | GET    | `/ecopontos/{id}`       | Retorna dados de um ponto de coleta        |
 | POST   | `/ecopontos`            | Cadastra um novo ponto de coleta           |
 | PUT    | `/ecopontos/{id}`       | Atualiza um ponto de coleta                |

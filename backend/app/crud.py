@@ -8,8 +8,11 @@ from app.schemas import EcopontoCreate, EcopontoUpdate
 # ========================================
 
 
-def listar_ecopontos(db: Session):
-    return db.query(Ecoponto).all()
+def listar_ecopontos(db: Session, tipo_residuo: str | None = None):
+    query = db.query(Ecoponto)
+    if tipo_residuo:
+        query = query.filter(Ecoponto.tipos_residuo.ilike(f"%{tipo_residuo}%"))
+    return query.all()
 
 
 def obter_ecoponto(db: Session, ecoponto_id: int):

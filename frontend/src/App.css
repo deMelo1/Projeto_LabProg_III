@@ -182,3 +182,113 @@ tr:hover {
   border-radius: 6px;
   color: #1a7d3f;
 }
+
+/* ===== Filtro Bar ===== */
+.filtro-bar {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  align-items: center;
+}
+
+.filtro-bar input {
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+  flex: 1;
+  max-width: 400px;
+}
+
+.filtro-bar button {
+  padding: 0.5rem 1rem;
+  background: #1a7d3f;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+.filtro-bar button:hover {
+  background: #15632f;
+}
+
+.filtro-bar .btn-limpar {
+  background: #888;
+}
+
+.filtro-bar .btn-limpar:hover {
+  background: #666;
+}
+
+/* ===== Tabela clicavel ===== */
+.tr-link {
+  cursor: pointer;
+}
+
+.tr-link:hover {
+  background: #d4f5dd;
+}
+
+/* ===== Detalhe Ecoponto ===== */
+.detalhe-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.detalhe-campo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  background: #f0faf3;
+  padding: 0.8rem 1rem;
+  border-radius: 6px;
+  border: 1px solid #c8e6cf;
+}
+
+.detalhe-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #1a7d3f;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ===== Botoes de acao ===== */
+.acoes {
+  display: flex;
+  gap: 0.8rem;
+  margin-top: 1rem;
+}
+
+.btn {
+  display: inline-block;
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  text-decoration: none;
+  text-align: center;
+}
+
+.btn-editar {
+  background: #1a7d3f;
+  color: #fff;
+}
+
+.btn-editar:hover {
+  background: #15632f;
+}
+
+.btn-excluir {
+  background: #c0392b;
+  color: #fff;
+}
+
+.btn-excluir:hover {
+  background: #962d22;
+}

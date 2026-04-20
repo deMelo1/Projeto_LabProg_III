@@ -1,20 +1,41 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useParams, useNavigate } from 'react-router-dom'
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 
-function NovoEcoponto() {
-  const [form, setForm] = useState({
-    nome: '',
-    endereco: '',
-    cidade: '',
-    estado: '',
-    latitude: '',
-    longitude: '',
-    tipos_residuo: '',
-    descricao: '',
-  })
-  const [mensagem, setMensagem] = useState(null)
+function EditarEcoponto() {
+  const { id } = useParams()
+  const navigate = useNavigate()
+  const [form, setForm] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [erro, setErro] = useState(null)
   const [enviando, setEnviando] = useState(false)
+  const [mensagem, setMensagem] = useState(null)
+
+  useEffect(() => {
+    fetch(`${API_URL}/ecopontos/${id}`)
+      .then(res => {
+        if (!res.ok) throw new Error('Ecoponto nao encontrado')
+        return res.json()
+      })
+      .then(data => {
+        setForm({
+          nome: data.nome,
+          endereco: data.endereco,
+          cidade: data.cidade,
+          estado: data.estado,
+          latitude: data.latitude ?? '',
+          longitude: data.longitude ?? '',
+          tipos_residuo: data.tipos_residuo,
+          descricao: data.descricao ?? '',
+        })
+        setLoading(false)
+      })
+      .catch(err => {
+        setErro(err.message)
+        setLoading(false)
+      })
+  }, [id])
 
   function handleChange(e) {
     setForm({ ...form, [e.target.name]: e.target.value })
@@ -32,19 +53,19 @@ function NovoEcoponto() {
       descricao: form.descricao || null,
     }
 
-    fetch(`${API_URL}/ecopontos`, {
-      method: 'POST',
+    fetch(`${API_URL}/ecopontos/${id}`, {
+      method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
     })
       .then(res => {
-        if (!res.ok) throw new Error('Erro ao cadastrar')
+        if (!res.ok) throw new Error('Erro ao atualizar')
         return res.json()
       })
-      .then(data => {
-        setMensagem(`Ecoponto "${data.nome}" cadastrado com sucesso! (ID: ${data.id})`)
-        setForm({ nome: '', endereco: '', cidade: '', estado: '', latitude: '', longitude: '', tipos_residuo: '', descricao: '' })
+      .then(() => {
+        setMensagem('Ecoponto atualizado com sucesso!')
         setEnviando(false)
+        setTimeout(() => navigate(`/ecopontos/${id}`), 1000)
       })
       .catch(err => {
         setMensagem(err.message)
@@ -52,10 +73,13 @@ function NovoEcoponto() {
       })
   }
 
+  if (loading) return <div className="page"><p>Carregando...</p></div>
+  if (erro) return <div className="page"><p className="status-err">{erro}</p></div>
+
   return (
     <div className="page">
-      <h1>Novo Ecoponto</h1>
-      <p className="subtitle">Cadastrar um novo ponto de coleta</p>
+      <h1>Editar Ecoponto</h1>
+      <p className="subtitle">Alterar dados do ponto de coleta</p>
 
       <form onSubmit={handleSubmit} className="form">
         <label>
@@ -99,7 +123,7 @@ function NovoEcoponto() {
           <textarea name="descricao" value={form.descricao} onChange={handleChange} rows={3} />
         </label>
         <button type="submit" disabled={enviando}>
-          {enviando ? 'Cadastrando...' : 'Cadastrar'}
+          {enviando ? 'Salvando...' : 'Salvar Alteracoes'}
         </button>
       </form>
 
@@ -108,4 +132,4 @@ function NovoEcoponto() {
   )
 }
 
-export default NovoEcoponto
+export default EditarEcoponto
