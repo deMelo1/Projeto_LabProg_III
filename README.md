@@ -26,10 +26,15 @@ Permite **listagem** e **busca** de locais de descarte, com **filtro por tipo de
 4. Editar os dados de um ecoponto existente
 5. Excluir um ecoponto com confirmação
 
-### F2 — Histórico e estatísticas de descarte
+### F2 — Histórico e estatísticas de descarte (Completa)
 
 Registra os descartes realizados pelo usuário e organiza essas informações em histórico.
 Inclui exibição de **estatísticas simples de uso** para acompanhar a atividade ao longo do tempo.
+
+**Fluxo completo:**
+1. Registrar um descarte informando tipo de resíduo, ecoponto (opcional) e descrição
+2. Listar todos os descartes registrados com filtro por tipo de resíduo
+3. Visualizar estatísticas: total de descartes, distribuição por tipo e por mês
 
 ### F3 — Classificação de resíduos por imagem
 
@@ -115,7 +120,7 @@ As tabelas são criadas automaticamente pelo backend na primeira execução.
 | Tabela      | Descrição                                 | Status        |
 | ----------- | ----------------------------------------- | ------------- |
 | `ecopontos` | Pontos de coleta seletiva                 | CRUD completo |
-| `descartes` | Registros de descarte feitos pelo usuário | Modelo criado |
+| `descartes` | Registros de descarte feitos pelo usuário | CRUD completo |
 
 ---
 
@@ -132,6 +137,9 @@ O frontend roda em **React** com **Vite** dentro de um container Docker, acessí
 | `/ecopontos/:id`        | Detalhe Ecoponto  | Exibe todos os dados de um ecoponto com opções de editar/excluir|
 | `/novo-ecoponto`        | Novo Ecoponto     | Formulário para cadastrar novo ponto de coleta (com lat/lng)    |
 | `/editar-ecoponto/:id`  | Editar Ecoponto   | Formulário para alterar dados de um ecoponto existente          |
+| `/descartes`            | Descartes         | Lista o histórico de descartes com filtro por tipo de resíduo   |
+| `/novo-descarte`        | Novo Descarte     | Formulário para registrar um descarte realizado                 |
+| `/estatisticas`         | Estatísticas      | Total de descartes, distribuição por tipo e por mês             |
 
 ### Navegação
 
@@ -149,6 +157,10 @@ O frontend consome os seguintes endpoints do backend:
 | `/ecopontos`        | POST   | Novo Ecoponto     | Cadastra um novo ecoponto              |
 | `/ecopontos/{id}`   | PUT    | Editar Ecoponto   | Atualiza dados de um ecoponto          |
 | `/ecopontos/{id}`   | DELETE | Detalhe Ecoponto  | Remove um ecoponto                     |
+| `/descartes`        | GET    | Descartes         | Lista descartes (com filtro opcional)  |
+| `/descartes`        | POST   | Novo Descarte     | Registra um novo descarte              |
+| `/ecopontos`        | GET    | Novo Descarte     | Popula o dropdown de ecopontos         |
+| `/descartes/estatisticas` | GET | Estatísticas | Dados para os gráficos de estatísticas |
 
 ---
 
@@ -170,13 +182,13 @@ O frontend consome os seguintes endpoints do backend:
 | PUT    | `/ecopontos/{id}`   | Atualiza um ecoponto existente                     |
 | DELETE | `/ecopontos/{id}`   | Remove um ecoponto                                 |
 
-### F2 — Descartes (em construção)
+### F2 — Descartes (completo)
 
-| Método | Rota                      | Descrição                          |
-| ------ | ------------------------- | ---------------------------------- |
-| GET    | `/descartes`              | Lista histórico de descartes       |
-| POST   | `/descartes`              | Registra um novo descarte          |
-| GET    | `/descartes/estatisticas` | Retorna estatísticas de uso        |
+| Método | Rota                      | Descrição                                           |
+| ------ | ------------------------- | --------------------------------------------------- |
+| GET    | `/descartes`              | Lista histórico de descartes (aceita `?tipo_residuo=`) |
+| POST   | `/descartes`              | Registra um novo descarte                           |
+| GET    | `/descartes/estatisticas` | Retorna total, descartes por tipo e por mês         |
 
 ### F3 — Classificação (em construção)
 
@@ -201,6 +213,28 @@ Todos os dados são persistidos no PostgreSQL e sobrevivem a reinicializações 
 
 ---
 
+## Fluxo completo da F2 (passo a passo)
+
+1. Suba o ambiente com `docker compose up --build`
+2. Cadastre pelo menos um ecoponto (se ainda não tiver) via **"Novo Ecoponto"**
+3. Clique em **"Novo Descarte"** no menu e registre alguns descartes variando os tipos de resíduo
+4. Clique em **"Descartes"** no menu para ver o histórico completo
+5. Use o campo de filtro para buscar por tipo de resíduo (ex: "plastico")
+6. Clique em **"Estatisticas"** no menu para ver o total, a distribuição por tipo e a tabela por mês
+
+---
+
+## Teste de endpoints pelo Postman
+
+As coleções do Postman estão na pasta `postman/`:
+
+| Arquivo                                            | Funcionalidade |
+| -------------------------------------------------- | -------------- |
+| `EcoFilter_Ecopontos.postman_collection.json`      | F1 — Ecopontos |
+| `EcoFilter_Descartes.postman_collection.json`      | F2 — Descartes |
+
+---
+
 ## Capturas de Tela
 
 As capturas de tela das funcionalidades implementadas devem ser salvas na pasta `docs/screenshots/` com os seguintes nomes:
@@ -214,3 +248,7 @@ As capturas de tela das funcionalidades implementadas devem ser salvas na pasta 
 | `05_detalhe_ecoponto.png`    | Tela de detalhes de um ecoponto                |
 | `06_editar_ecoponto.png`     | Formulário de edição preenchido                |
 | `07_swagger_api.png`         | Documentação Swagger da API (localhost:8000/docs) |
+| `08_novo_descarte.png`       | Formulário de registro de descarte preenchido     |
+| `09_listagem_descartes.png`  | Histórico de descartes registrados                |
+| `10_filtro_descartes.png`    | Histórico filtrado por tipo de resíduo            |
+| `11_estatisticas.png`        | Tela de estatísticas com total e gráficos         |

@@ -292,3 +292,88 @@ tr:hover {
 .btn-excluir:hover {
   background: #962d22;
 }
+
+/* ===== Formulario select ===== */
+.form select {
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+  background: #fff;
+}
+
+/* ===== Estatisticas ===== */
+.stats-total {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem;
+  background: #f0faf3;
+  border: 1px solid #c8e6cf;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+}
+
+.stats-numero {
+  font-size: 3rem;
+  font-weight: 700;
+  color: #1a7d3f;
+}
+
+.stats-label {
+  font-size: 1rem;
+  color: #666;
+  margin-top: 0.3rem;
+}
+
+.stats-secao {
+  margin-bottom: 2rem;
+}
+
+.stats-secao h3 {
+  color: #1a7d3f;
+  margin-bottom: 1rem;
+}
+
+.stats-barras {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.stats-barra-item {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.stats-barra-label {
+  min-width: 100px;
+  font-size: 0.9rem;
+  text-transform: capitalize;
+  color: #333;
+}
+
+.stats-barra-container {
+  flex: 1;
+  height: 20px;
+  background: #e8e8e8;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.stats-barra-fill {
+  height: 100%;
+  background: #1a7d3f;
+  border-radius: 4px;
+  min-width: 4px;
+  transition: width 0.3s ease;
+}
+
+.stats-barra-valor {
+  min-width: 30px;
+  text-align: right;
+  font-weight: 600;
+  color: #1a7d3f;
+  font-size: 0.9rem;
+}

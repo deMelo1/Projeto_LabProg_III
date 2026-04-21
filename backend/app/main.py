@@ -4,7 +4,10 @@ from sqlalchemy.orm import Session
 
 from app.database import engine, get_db, Base
 from app.models import Ecoponto, Descarte  # noqa: F401
-from app.schemas import EcopontoCreate, EcopontoUpdate, EcopontoResponse
+from app.schemas import (
+    EcopontoCreate, EcopontoUpdate, EcopontoResponse,
+    DescarteCreate, DescarteResponse, EstatisticasResponse,
+)
 from app import crud
 
 # cria as tabelas no banco se ainda nao existirem
@@ -78,22 +81,50 @@ def remover_ecoponto(ecoponto_id: int, db: Session = Depends(get_db)):
 
 # ---------- F2 – Histórico e estatísticas de descarte ----------
 
-@app.get("/descartes", tags=["Descartes"])
-def listar_descartes():
-    """Lista o histórico de descartes do usuário."""
-    return {"descartes": []}
+@app.get("/descartes", tags=["Descartes"], response_model=list[DescarteResponse])
+def listar_descartes(
+    tipo_residuo: str | None = Query(None, description="Filtrar por tipo de resíduo"),
+    db: Session = Depends(get_db),
+):
+    """Lista o histórico de descartes registrados. Aceita filtro por tipo de resíduo."""
+    descartes = crud.listar_descartes(db, tipo_residuo=tipo_residuo)
+    resultado = []
+    for d in descartes:
+        nome_ecoponto = d.ecoponto.nome if d.ecoponto else None
+        resultado.append(DescarteResponse(
+            id=d.id,
+            ecoponto_id=d.ecoponto_id,
+            tipo_residuo=d.tipo_residuo,
+            descricao=d.descricao,
+            data_descarte=d.data_descarte,
+            ecoponto_nome=nome_ecoponto,
+        ))
+    return resultado
 
 
-@app.post("/descartes", tags=["Descartes"])
-def registrar_descarte():
+@app.post("/descartes", tags=["Descartes"], response_model=DescarteResponse, status_code=201)
+def registrar_descarte(dados: DescarteCreate, db: Session = Depends(get_db)):
     """Registra um novo descarte realizado."""
-    return {"mensagem": "endpoint em construção"}
+    if dados.ecoponto_id:
+        ecoponto = crud.obter_ecoponto(db, dados.ecoponto_id)
+        if not ecoponto:
+            raise HTTPException(status_code=404, detail="Ecoponto não encontrado")
+    descarte = crud.criar_descarte(db, dados)
+    nome_ecoponto = descarte.ecoponto.nome if descarte.ecoponto else None
+    return DescarteResponse(
+        id=descarte.id,
+        ecoponto_id=descarte.ecoponto_id,
+        tipo_residuo=descarte.tipo_residuo,
+        descricao=descarte.descricao,
+        data_descarte=descarte.data_descarte,
+        ecoponto_nome=nome_ecoponto,
+    )
 
 
-@app.get("/descartes/estatisticas", tags=["Descartes"])
-def estatisticas_descartes():
-    """Retorna estatísticas simples de uso (quantidade de descartes, etc.)."""
-    return {"estatisticas": {}}
+@app.get("/descartes/estatisticas", tags=["Descartes"], response_model=EstatisticasResponse)
+def estatisticas_descartes(db: Session = Depends(get_db)):
+    """Retorna estatísticas simples de uso (quantidade de descartes por tipo e por mês)."""
+    return crud.obter_estatisticas(db)
 
 
 # ---------- F3 – Classificação de resíduos por imagem ----------
