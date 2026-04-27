@@ -1,22 +1,37 @@
-from fastapi import FastAPI, Depends, HTTPException, Query
+import os
+import uuid
+from pathlib import Path
+
+from fastapi import FastAPI, Depends, HTTPException, Query, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
 
 from app.database import engine, get_db, Base
-from app.models import Ecoponto, Descarte  # noqa: F401
+from app.models import Ecoponto, Descarte, Classificacao  # noqa: F401
 from app.schemas import (
     EcopontoCreate, EcopontoUpdate, EcopontoResponse,
     DescarteCreate, DescarteResponse, EstatisticasResponse,
+    ClassificacaoResponse,
 )
 from app import crud
+from app.classificador import classificar
 
 # cria as tabelas no banco se ainda nao existirem
 Base.metadata.create_all(bind=engine)
 
+# diretorio onde as imagens classificadas ficam salvas
+UPLOAD_DIR = Path(os.getenv("UPLOAD_DIR", "/app/uploads"))
+UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+
+# extensoes aceitas no upload
+EXTENSOES_VALIDAS = {".jpg", ".jpeg", ".png", ".webp", ".gif", ".bmp"}
+TAMANHO_MAX_MB = 8
+
 app = FastAPI(
     title="EcoFilter API",
     description="API do sistema EcoFilter para descarte correto de resíduos.",
-    version="0.2.0",
+    version="0.3.0",
 )
 
 app.add_middleware(
@@ -129,7 +144,90 @@ def estatisticas_descartes(db: Session = Depends(get_db)):
 
 # ---------- F3 – Classificação de resíduos por imagem ----------
 
-@app.post("/classificacao", tags=["Classificação"])
-def classificar_residuo():
-    """Recebe uma imagem de resíduo e retorna a classificação e orientação de descarte."""
-    return {"mensagem": "endpoint em construção"}
+@app.post(
+    "/classificacao",
+    tags=["Classificação"],
+    response_model=ClassificacaoResponse,
+    status_code=201,
+)
+async def classificar_residuo(
+    arquivo: UploadFile = File(..., description="Imagem do resíduo a ser classificado"),
+    db: Session = Depends(get_db),
+):
+    """Recebe uma imagem de resíduo, classifica-a e retorna a categoria + orientação de descarte."""
+    nome_original = arquivo.filename or "imagem"
+    extensao = Path(nome_original).suffix.lower()
+    if extensao not in EXTENSOES_VALIDAS:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Extensao nao suportada. Use: {', '.join(sorted(EXTENSOES_VALIDAS))}",
+        )
+
+    conteudo = await arquivo.read()
+    if len(conteudo) == 0:
+        raise HTTPException(status_code=400, detail="Arquivo vazio")
+    if len(conteudo) > TAMANHO_MAX_MB * 1024 * 1024:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Arquivo excede o tamanho maximo de {TAMANHO_MAX_MB} MB",
+        )
+
+    # gera nome unico e salva em disco
+    arquivo_salvo = f"{uuid.uuid4().hex}{extensao}"
+    caminho = UPLOAD_DIR / arquivo_salvo
+    caminho.write_bytes(conteudo)
+
+    # roda classificador simulado
+    resultado = classificar(nome_original, conteudo)
+
+    nova = crud.criar_classificacao(
+        db,
+        nome_arquivo=nome_original,
+        arquivo_salvo=arquivo_salvo,
+        tipo_residuo=resultado["tipo_residuo"],
+        confianca=resultado["confianca"],
+        orientacao=resultado["orientacao"],
+    )
+    return nova
+
+
+@app.get("/classificacao", tags=["Classificação"], response_model=list[ClassificacaoResponse])
+def listar_classificacoes(
+    tipo_residuo: str | None = Query(None, description="Filtrar por tipo de resíduo"),
+    db: Session = Depends(get_db),
+):
+    """Lista o histórico de classificações realizadas."""
+    return crud.listar_classificacoes(db, tipo_residuo=tipo_residuo)
+
+
+@app.get("/classificacao/{classificacao_id}", tags=["Classificação"], response_model=ClassificacaoResponse)
+def obter_classificacao(classificacao_id: int, db: Session = Depends(get_db)):
+    """Retorna os dados de uma classificação específica."""
+    item = crud.obter_classificacao(db, classificacao_id)
+    if not item:
+        raise HTTPException(status_code=404, detail="Classificação não encontrada")
+    return item
+
+
+@app.get("/classificacao/{classificacao_id}/imagem", tags=["Classificação"])
+def obter_imagem_classificacao(classificacao_id: int, db: Session = Depends(get_db)):
+    """Devolve a imagem original da classificação."""
+    item = crud.obter_classificacao(db, classificacao_id)
+    if not item:
+        raise HTTPException(status_code=404, detail="Classificação não encontrada")
+    caminho = UPLOAD_DIR / item.arquivo_salvo
+    if not caminho.exists():
+        raise HTTPException(status_code=404, detail="Imagem não encontrada no servidor")
+    return FileResponse(caminho)
+
+
+@app.delete("/classificacao/{classificacao_id}", tags=["Classificação"])
+def remover_classificacao(classificacao_id: int, db: Session = Depends(get_db)):
+    """Remove uma classificação do histórico (e a imagem associada)."""
+    item = crud.remover_classificacao(db, classificacao_id)
+    if not item:
+        raise HTTPException(status_code=404, detail="Classificação não encontrada")
+    caminho = UPLOAD_DIR / item.arquivo_salvo
+    if caminho.exists():
+        caminho.unlink()
+    return {"detail": "Classificação removida com sucesso"}

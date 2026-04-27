@@ -1,7 +1,7 @@
 from sqlalchemy import func, extract
 from sqlalchemy.orm import Session
 
-from app.models import Ecoponto, Descarte
+from app.models import Ecoponto, Descarte, Classificacao
 from app.schemas import EcopontoCreate, EcopontoUpdate, DescarteCreate
 
 # ========================================
@@ -100,3 +100,49 @@ def obter_estatisticas(db: Session):
         "descartes_por_tipo": por_tipo,
         "descartes_por_mes": por_mes,
     }
+
+
+# ========================================
+#  Funcoes de acesso ao banco - Classificacoes (F3)
+# ========================================
+
+
+def listar_classificacoes(db: Session, tipo_residuo: str | None = None):
+    query = db.query(Classificacao).order_by(Classificacao.data_classificacao.desc())
+    if tipo_residuo:
+        query = query.filter(Classificacao.tipo_residuo.ilike(f"%{tipo_residuo}%"))
+    return query.all()
+
+
+def obter_classificacao(db: Session, classificacao_id: int):
+    return db.query(Classificacao).filter(Classificacao.id == classificacao_id).first()
+
+
+def criar_classificacao(
+    db: Session,
+    nome_arquivo: str,
+    arquivo_salvo: str,
+    tipo_residuo: str,
+    confianca: float,
+    orientacao: str,
+):
+    nova = Classificacao(
+        nome_arquivo=nome_arquivo,
+        arquivo_salvo=arquivo_salvo,
+        tipo_residuo=tipo_residuo,
+        confianca=confianca,
+        orientacao=orientacao,
+    )
+    db.add(nova)
+    db.commit()
+    db.refresh(nova)
+    return nova
+
+
+def remover_classificacao(db: Session, classificacao_id: int):
+    item = db.query(Classificacao).filter(Classificacao.id == classificacao_id).first()
+    if not item:
+        return None
+    db.delete(item)
+    db.commit()
+    return item

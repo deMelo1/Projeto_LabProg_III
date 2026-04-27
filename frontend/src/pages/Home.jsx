@@ -28,7 +28,7 @@ function Home() {
         </div>
         <div className="card-info">
           <h3>F3 - Classificacao</h3>
-          <p>Classificacao de residuos por imagem com orientacao de descarte.</p>
+          <p>Envio de imagem do residuo com classificacao automatica e orientacao de descarte.</p>
         </div>
       </div>
 

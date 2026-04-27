@@ -64,3 +64,18 @@ class EstatisticasResponse(BaseModel):
     total_descartes: int
     descartes_por_tipo: dict[str, int]
     descartes_por_mes: list[dict]
+
+
+# ---------- Classificacao (F3) ----------
+
+class ClassificacaoResponse(BaseModel):
+    """Resposta da classificacao de uma imagem de residuo."""
+    id: int
+    nome_arquivo: str
+    arquivo_salvo: str
+    tipo_residuo: str
+    confianca: float
+    orientacao: str
+    data_classificacao: datetime
+
+    model_config = ConfigDict(from_attributes=True)

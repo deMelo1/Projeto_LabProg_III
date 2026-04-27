@@ -7,6 +7,8 @@ import EditarEcoponto from './pages/EditarEcoponto'
 import Descartes from './pages/Descartes'
 import NovoDescarte from './pages/NovoDescarte'
 import Estatisticas from './pages/Estatisticas'
+import NovaClassificacao from './pages/NovaClassificacao'
+import Classificacoes from './pages/Classificacoes'
 import './App.css'
 
 function App() {
@@ -21,6 +23,8 @@ function App() {
           <NavLink to="/descartes">Descartes</NavLink>
           <NavLink to="/novo-descarte">Novo Descarte</NavLink>
           <NavLink to="/estatisticas">Estatisticas</NavLink>
+          <NavLink to="/nova-classificacao">Nova Classificacao</NavLink>
+          <NavLink to="/classificacoes">Classificacoes</NavLink>
         </div>
       </nav>
 
@@ -34,6 +38,8 @@ function App() {
           <Route path="/descartes" element={<Descartes />} />
           <Route path="/novo-descarte" element={<NovoDescarte />} />
           <Route path="/estatisticas" element={<Estatisticas />} />
+          <Route path="/nova-classificacao" element={<NovaClassificacao />} />
+          <Route path="/classificacoes" element={<Classificacoes />} />
         </Routes>
       </main>
     </BrowserRouter>

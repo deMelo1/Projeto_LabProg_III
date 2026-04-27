@@ -35,3 +35,15 @@ class Descarte(Base):
     data_descarte = Column(DateTime, server_default=func.now())
 
     ecoponto = relationship("Ecoponto", back_populates="descartes")
+
+
+class Classificacao(Base):
+    __tablename__ = "classificacoes"
+
+    id = Column(Integer, primary_key=True, index=True)
+    nome_arquivo = Column(String(255), nullable=False)
+    arquivo_salvo = Column(String(255), nullable=False)   # nome unico no disco
+    tipo_residuo = Column(String(50), nullable=False)     # categoria classificada
+    confianca = Column(Float, nullable=False)              # 0.0 a 1.0
+    orientacao = Column(Text, nullable=False)              # texto de orientacao de descarte
+    data_classificacao = Column(DateTime, server_default=func.now())
