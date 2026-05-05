@@ -351,11 +351,11 @@ npx expo start
 
 | Arquivo                              | Descrição                                         |
 | ------------------------------------ | ------------------------------------------------- |
-| `17_mobile_home.png`                 | Tela inicial do app com status da API             |
-| `18_mobile_ecopontos.png`            | Lista de ecopontos no app                         |
-| `19_mobile_novo_ecoponto.png`        | Formulário de cadastro no app                     |
-| `20_mobile_detalhe_ecoponto.png`     | Detalhes de um ecoponto no app                    |
-| `21_mobile_editar_ecoponto.png`      | Formulário de edição no app                       |
+| `17_mobile_home.jpeg`                | Tela inicial do app com status da API             |
+| `18_mobile_ecopontos.jpeg`           | Lista de ecopontos no app                         |
+| `19_mobile_novo_ecoponto.jpeg`       | Formulário de cadastro no app                     |
+| `20_mobile_detalhe_ecoponto.jpeg`    | Detalhes de um ecoponto no app                    |
+| `21_mobile_editar_ecoponto.jpeg`     | Formulário de edição no app                       |
 
 ---
 
