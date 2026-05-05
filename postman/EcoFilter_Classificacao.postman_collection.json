@@ -1,0 +1,109 @@
+{
+	"info": {
+		"name": "EcoFilter - Classificacao (F3)",
+		"description": "Colecao de testes para a funcionalidade F3 (classificacao de residuos por imagem) da API EcoFilter. O endpoint POST /classificacao usa multipart/form-data: selecione um arquivo no campo 'arquivo' antes de enviar.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "1. Classificar Imagem (POST /classificacao)",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "arquivo",
+							"type": "file",
+							"description": "Imagem do residuo (jpg, jpeg, png, webp, gif, bmp - max 8MB). Selecione um arquivo aqui antes de enviar."
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8000/classificacao",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "8000",
+					"path": ["classificacao"]
+				}
+			}
+		},
+		{
+			"name": "2. Listar Classificacoes",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/classificacao",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "8000",
+					"path": ["classificacao"]
+				}
+			}
+		},
+		{
+			"name": "3. Filtrar Classificacoes por Tipo",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/classificacao?tipo_residuo=plastico",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "8000",
+					"path": ["classificacao"],
+					"query": [
+						{
+							"key": "tipo_residuo",
+							"value": "plastico"
+						}
+					]
+				}
+			}
+		},
+		{
+			"name": "4. Obter Classificacao por ID",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/classificacao/1",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "8000",
+					"path": ["classificacao", "1"]
+				}
+			}
+		},
+		{
+			"name": "5. Obter Imagem da Classificacao",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/classificacao/1/imagem",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "8000",
+					"path": ["classificacao", "1", "imagem"]
+				}
+			}
+		},
+		{
+			"name": "6. Remover Classificacao",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/classificacao/1",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "8000",
+					"path": ["classificacao", "1"]
+				}
+			}
+		}
+	]
+}

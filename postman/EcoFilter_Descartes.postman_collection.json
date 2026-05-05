@@ -1,0 +1,103 @@
+{
+	"info": {
+		"name": "EcoFilter - Descartes (F2)",
+		"description": "Colecao de testes para a funcionalidade F2 (historico e estatisticas de descarte) da API EcoFilter.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "1. Registrar Descarte",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"tipo_residuo\": \"plastico\",\n  \"ecoponto_id\": 1,\n  \"descricao\": \"Garrafa PET descartada no ecoponto.\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8000/descartes",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "8000",
+					"path": ["descartes"]
+				}
+			}
+		},
+		{
+			"name": "2. Registrar Descarte (sem ecoponto)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"tipo_residuo\": \"vidro\",\n  \"descricao\": \"Garrafa de vidro descartada avulsa.\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8000/descartes",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "8000",
+					"path": ["descartes"]
+				}
+			}
+		},
+		{
+			"name": "3. Listar Descartes",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/descartes",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "8000",
+					"path": ["descartes"]
+				}
+			}
+		},
+		{
+			"name": "4. Filtrar Descartes por Tipo",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/descartes?tipo_residuo=plastico",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "8000",
+					"path": ["descartes"],
+					"query": [
+						{
+							"key": "tipo_residuo",
+							"value": "plastico"
+						}
+					]
+				}
+			}
+		},
+		{
+			"name": "5. Estatisticas de Descartes",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/descartes/estatisticas",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "8000",
+					"path": ["descartes", "estatisticas"]
+				}
+			}
+		}
+	]
+}
