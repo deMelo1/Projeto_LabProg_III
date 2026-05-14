@@ -3,15 +3,13 @@ services:
     image: postgres:16
     container_name: ecofilter_db
     environment:
-      POSTGRES_USER: eco
-      POSTGRES_PASSWORD: eco
-      POSTGRES_DB: ecofilter
-    ports:
-      - "5432:5432"
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     volumes:
       - db_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U eco -d ecofilter"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -21,10 +19,10 @@ services:
       context: ./backend
     container_name: ecofilter_backend
     environment:
-      DATABASE_URL: postgresql://eco:eco@db:5432/ecofilter
+      DATABASE_URL: ${DATABASE_URL}
       UPLOAD_DIR: /app/uploads
     ports:
-      - "8000:8000"
+      - "${BACKEND_PORT}:8000"
     volumes:
       - uploads_data:/app/uploads
     depends_on:
@@ -35,8 +33,10 @@ services:
     build:
       context: ./frontend
     container_name: ecofilter_frontend
+    environment:
+      VITE_API_URL: ${VITE_API_URL}
     ports:
-      - "5173:5173"
+      - "${FRONTEND_PORT}:5173"
     depends_on:
       - backend
 

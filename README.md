@@ -100,20 +100,47 @@ O sistema recebe uma **imagem do resíduo**, realiza a **classificação da cate
 └── README.md
 ```
 
+## Configuracao (variaveis de ambiente)
+
+Antes de subir o ambiente, copie o arquivo de exemplo e ajuste os valores:
+
+```bash
+cp .env.example .env
+```
+
+O arquivo `.env` contem:
+
+| Variavel          | Descricao                                                       |
+|-------------------|-----------------------------------------------------------------|
+| `POSTGRES_USER`   | Usuario do Postgres                                             |
+| `POSTGRES_PASSWORD` | Senha do Postgres                                             |
+| `POSTGRES_DB`     | Nome do banco                                                   |
+| `DATABASE_URL`    | String de conexao usada pelo backend (host = nome do servico)   |
+| `BACKEND_PORT`    | Porta externa da API (host)                                     |
+| `FRONTEND_PORT`   | Porta externa do frontend (host)                                |
+| `VITE_API_URL`    | URL completa da API consumida pelo navegador (IP + porta)       |
+
+> **Local (dev):** use `VITE_API_URL=http://localhost:8062` (ajuste a porta se quiser).
+> **Servidor compartilhado:** use `VITE_API_URL=http://<IP_DO_SERVIDOR>:<BACKEND_PORT>`.
+
+---
+
 ## Como subir o ambiente (Docker Compose)
 
-Na raiz do projeto, execute:
+Na raiz do projeto (com `.env` configurado):
 
 ```bash
 docker compose up --build
 ```
 
-Acesse:
+Acesse (usando os defaults do `.env.example`):
 
-- **Frontend:** http://localhost:5173 (React/Vite)
-- **Backend:** http://localhost:8000 (FastAPI)
-- **Swagger (docs da API):** http://localhost:8000/docs
-- **Healthcheck:** http://localhost:8000/health
+- **Frontend:** http://localhost:8061 (React/Vite)
+- **Backend:** http://localhost:8062 (FastAPI)
+- **Swagger (docs da API):** http://localhost:8062/docs
+- **Healthcheck:** http://localhost:8062/health
+
+> O Postgres so e acessivel internamente pela rede do compose (porta 5432 nao e exposta no host).
 
 ---
 
@@ -122,6 +149,55 @@ Acesse:
 ```bash
 docker compose down
 ```
+
+---
+
+## Deploy no servidor compartilhado (Grupo 07)
+
+O sistema esta configurado para o servidor compartilhado da disciplina (`192.168.91.176`) usando o usuario `grupo07` e a faixa de portas `8061-8070`.
+
+### Passo a passo
+
+1. **Copiar o projeto para o servidor (terminal local):**
+
+   ```bash
+   ssh grupo07@192.168.91.176 "mkdir -p ~/ecofilter"
+   scp -r ./* grupo07@192.168.91.176:~/ecofilter/
+   scp .env grupo07@192.168.91.176:~/ecofilter/.env
+   ```
+
+2. **Conectar via SSH e rodar o deploy:**
+
+   ```bash
+   ssh grupo07@192.168.91.176
+   cd ~/ecofilter
+   chmod +x scripts/deploy.sh
+   ./scripts/deploy.sh
+   ```
+
+   O script:
+   - sobe os containers em background (`docker compose up -d --build`);
+   - aguarda o backend ficar saudavel;
+   - executa a carga inicial de dados (`scripts/seed_data.py`).
+
+3. **Acessar pelo navegador:**
+
+   - Frontend: http://192.168.91.176:8061
+   - Swagger: http://192.168.91.176:8062/docs
+
+### Carga inicial de dados (seed)
+
+O `scripts/deploy.sh` ja roda o seed na primeira execucao (insere 3 ecopontos e 4 descartes de exemplo). Para rodar manualmente:
+
+```bash
+docker compose exec backend python scripts/seed_data.py
+```
+
+Se ja tiver dados no banco, o script nao duplica.
+
+### Portas usadas
+
+Frontend abre na 8061 (interno 5173), backend na 8062 (interno 8000). O Postgres nao e exposto pro host, fica so na rede interna do compose.
 
 ---
 
