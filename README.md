@@ -50,7 +50,7 @@ O sistema recebe uma **imagem do resíduo**, realiza a **classificação da cate
 
 > **Sobre o classificador:** a classificação é feita pelo modelo **[`prithivMLmods/Augmented-Waste-Classifier-SigLIP2`](https://huggingface.co/prithivMLmods/Augmented-Waste-Classifier-SigLIP2)** (HuggingFace), um SigLIP2 fine-tuned para 10 classes de resíduo: *Battery, Biological, Cardboard, Clothes, Glass, Metal, Paper, Plastic, Shoes, Trash*. O modelo roda em CPU dentro do container do backend e os pesos (~370 MB) são pré-baixados durante o `docker compose build`. Cada classe é mapeada para uma categoria PT-BR (`bateria`, `organico`, `papelao`, `textil`, `vidro`, `metal`, `papel`, `plastico`, `calcado`, `rejeito`) com sua respectiva orientação de descarte.
 
-> **Observação:** a funcionalidade definida para implementação no aplicativo mobile é a **F3 (classificação por imagem)**, para aproveitar a câmera do celular como diferencial.
+> **Observação:** o aplicativo mobile implementa **F1 (ecopontos)** e **F3 (classificação por imagem)**, esta última para aproveitar a câmera do celular como diferencial.
 
 ---
 
@@ -92,9 +92,15 @@ O sistema recebe uma **imagem do resíduo**, realiza a **classificação da cate
 │   │       ├── EcopontosScreen.js
 │   │       ├── DetalheEcopontoScreen.js
 │   │       ├── NovoEcopontoScreen.js
-│   │       └── EditarEcopontoScreen.js
+│   │       ├── EditarEcopontoScreen.js
+│   │       ├── NovaClassificacaoScreen.js
+│   │       └── ClassificacoesScreen.js
 │   ├── App.js
 │   └── package.json
+├── scripts/
+│   └── seed.py
+├── docs/
+│   └── screenshots/
 ├── postman/
 ├── docker-compose.yml
 └── README.md
@@ -135,6 +141,21 @@ O sistema usa **PostgreSQL 16** rodando via Docker. As credenciais padrão estã
 - **Porta:** 5432
 
 As tabelas são criadas automaticamente pelo backend na primeira execução.
+
+### Popular o banco com dados de exemplo
+
+Para demonstrações, o script `scripts/seed.py` cadastra alguns ecopontos e descartes
+via API REST. Com o ambiente no ar (`docker compose up`), execute:
+
+```bash
+python3 scripts/seed.py
+```
+
+Por padrão ele usa `http://localhost:8000`. Para apontar para outro endereço:
+
+```bash
+API_URL=http://localhost:8000 python3 scripts/seed.py
+```
 
 ### Entidades
 
@@ -271,55 +292,54 @@ Todos os dados são persistidos no PostgreSQL e sobrevivem a reinicializações 
 
 ---
 
-## Mobile — MVP (Entregável 8)
+## Mobile (Entregável 10)
 
-O app mobile foi desenvolvido com **React Native (Expo)** e implementa a funcionalidade **F1 — Mapeamento e gestão de ecopontos**, consumindo a mesma API do backend.
+O app mobile foi desenvolvido com **React Native (Expo)** e implementa **F1 — Mapeamento e gestão de ecopontos** e **F3 — Classificação de resíduos por imagem** (usando a câmera do celular como diferencial), consumindo a mesma API do backend.
 
 ### Telas do app mobile
 
-| Tela               | Descrição                                                        |
-| ------------------ | ---------------------------------------------------------------- |
-| Home               | Status da conexão com a API (online/offline) e acesso aos Ecopontos |
-| Ecopontos          | Lista todos os ecopontos com filtro por tipo de resíduo + botão "+" |
-| Detalhe Ecoponto   | Visualização completa com botões de Editar e Excluir             |
-| Novo Ecoponto      | Formulário para cadastrar novo ponto de coleta                   |
-| Editar Ecoponto    | Formulário preenchido para atualizar dados do ecoponto           |
+| Tela                | Funcionalidade | Descrição                                                        |
+| ------------------- | -------------- | ---------------------------------------------------------------- |
+| Home                | —              | Status da conexão com a API (online/offline) e acesso às funcionalidades |
+| Ecopontos           | F1             | Lista todos os ecopontos com filtro por tipo de resíduo + botão "+" |
+| Detalhe Ecoponto    | F1             | Visualização completa com botões de Editar e Excluir             |
+| Novo Ecoponto       | F1             | Formulário para cadastrar novo ponto de coleta                   |
+| Editar Ecoponto     | F1             | Formulário preenchido para atualizar dados do ecoponto           |
+| Nova Classificação  | F3             | Tira foto (ou escolhe da galeria) e classifica o resíduo         |
+| Classificações      | F3             | Histórico de classificações com imagem, filtro e remoção         |
 
 ### Navegação
 
 ```
 Home
-  └── Ecopontos (lista com filtro)
-        ├── Detalhe Ecoponto (detalhes + editar/excluir)
-        │     └── Editar Ecoponto (formulário de edição)
-        └── Novo Ecoponto (formulário de criação)
+  ├── Ecopontos (lista com filtro)              [F1]
+  │     ├── Detalhe Ecoponto (detalhes + editar/excluir)
+  │     │     └── Editar Ecoponto (formulário de edição)
+  │     └── Novo Ecoponto (formulário de criação)
+  ├── Nova Classificação (câmera/galeria + resultado)   [F3]
+  └── Classificações (histórico)                        [F3]
 ```
 
 ### Consumo da API no mobile
 
-| Endpoint            | Método | Tela que consome    | Descrição                              |
-| ------------------- | ------ | ------------------- | -------------------------------------- |
-| `/health`           | GET    | Home                | Verifica conexão com a API             |
-| `/ecopontos`        | GET    | Ecopontos           | Lista ecopontos (com filtro opcional)  |
-| `/ecopontos/{id}`   | GET    | Detalhe / Editar    | Obtém dados de um ecoponto específico  |
-| `/ecopontos`        | POST   | Novo Ecoponto       | Cadastra um novo ecoponto              |
-| `/ecopontos/{id}`   | PUT    | Editar Ecoponto     | Atualiza dados de um ecoponto          |
-| `/ecopontos/{id}`   | DELETE | Detalhe Ecoponto    | Remove um ecoponto                     |
+| Endpoint                       | Método | Tela que consome    | Descrição                              |
+| ------------------------------ | ------ | ------------------- | -------------------------------------- |
+| `/health`                      | GET    | Home                | Verifica conexão com a API             |
+| `/ecopontos`                   | GET    | Ecopontos           | Lista ecopontos (com filtro opcional)  |
+| `/ecopontos/{id}`              | GET    | Detalhe / Editar    | Obtém dados de um ecoponto específico  |
+| `/ecopontos`                   | POST   | Novo Ecoponto       | Cadastra um novo ecoponto              |
+| `/ecopontos/{id}`              | PUT    | Editar Ecoponto     | Atualiza dados de um ecoponto          |
+| `/ecopontos/{id}`              | DELETE | Detalhe Ecoponto    | Remove um ecoponto                     |
+| `/classificacao`               | POST   | Nova Classificação  | Envia a foto (multipart) e recebe a classificação |
+| `/classificacao`               | GET    | Classificações      | Lista o histórico (com filtro opcional) |
+| `/classificacao/{id}/imagem`   | GET    | Classificações      | Carrega a imagem original              |
+| `/classificacao/{id}`          | DELETE | Classificações      | Remove uma classificação do histórico  |
 
 ### Configuração da URL da API
 
-Edite o arquivo `mobile/src/config.js` com o IP do computador na rede local:
+O arquivo `mobile/src/config.js` **detecta automaticamente** o IP do computador em desenvolvimento (Expo Go): ele reaproveita o endereço usado pelo celular para acessar o Metro bundler e monta a URL da API (`http://<ip>:8000`). Ao trocar de rede Wi-Fi, **não é preciso editar nada**.
 
-```javascript
-// Para dispositivo físico na mesma rede Wi-Fi:
-export const API_URL = 'http://192.168.x.x:8000';
-
-// Para emulador Android:
-export const API_URL = 'http://10.0.2.2:8000';
-
-// Para iOS Simulator:
-export const API_URL = 'http://localhost:8000';
-```
+Caso a detecção falhe (por exemplo, em um build de produção), ajuste o valor de `API_URL_FALLBACK` no próprio `config.js`. O backend precisa estar acessível na **porta 8000**.
 
 ### Como executar o app mobile
 
@@ -347,6 +367,14 @@ npx expo start
 6. Toque em **"Editar"** para alterar os dados ou **"Excluir"** para remover (com confirmação)
 7. Use o campo de filtro e o botão **"Buscar"** para filtrar por tipo de resíduo
 
+### Fluxo completo da F3 no mobile (passo a passo)
+
+1. Na Home, toque em **"Classificar Residuo"**
+2. Toque em **"Tirar foto"** (aceite a permissão de câmera) ou em **"Galeria"** para escolher uma imagem
+3. Toque em **"Classificar"** — a foto é enviada à API, que identifica o tipo de resíduo
+4. O resultado aparece com o **tipo de resíduo**, a **confiança** e a **orientação de descarte**; o registro já é salvo no histórico
+5. Toque em **"Ver no historico →"** (ou em **"Historico"** na Home) para ver as classificações anteriores, com a imagem, filtro por tipo e opção de remover
+
 ### Capturas de tela do mobile
 
 | Arquivo                              | Descrição                                         |
@@ -373,7 +401,7 @@ As coleções do Postman estão na pasta `postman/`:
 
 ## Capturas de Tela
 
-As capturas de tela das funcionalidades implementadas devem ser salvas na pasta `docs/screenshots/` com os seguintes nomes:
+As capturas de tela das funcionalidades implementadas estão disponíveis na pasta `docs/screenshots/`:
 
 | Arquivo                      | Descrição                                      |
 | ---------------------------- | ---------------------------------------------- |

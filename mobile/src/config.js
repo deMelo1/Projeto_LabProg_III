@@ -1,7 +1,7 @@
 import Constants from 'expo-constants';
 
 // Porta em que o backend (FastAPI) esta exposto pelo Docker.
-const BACKEND_PORT = 8062;
+const BACKEND_PORT = 8000;
 
 // Caso a deteccao automatica falhe (ex: build de producao), use este valor.
 // Em producao, troque por uma URL fixa, ex: 'https://api.seuservidor.com'.

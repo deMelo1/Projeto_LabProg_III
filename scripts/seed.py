@@ -4,15 +4,15 @@ Popula o banco do EcoFilter com dados de exemplo (ecopontos e descartes)
 via API REST. Util para demonstracoes.
 
 Uso:
-    python3 scripts/seed.py                      # usa http://localhost:8062
-    API_URL=http://localhost:8062 python3 scripts/seed.py
+    python3 scripts/seed.py                      # usa http://localhost:8000
+    API_URL=http://localhost:8000 python3 scripts/seed.py
 """
 import json
 import os
 import urllib.request
 import urllib.error
 
-API_URL = os.environ.get("API_URL", "http://localhost:8062").rstrip("/")
+API_URL = os.environ.get("API_URL", "http://localhost:8000").rstrip("/")
 
 ECOPONTOS = [
     {

@@ -1,9 +1,10 @@
 # EcoFilter Mobile
 
-App mobile do EcoFilter desenvolvido com React Native (Expo), implementando a funcionalidade F1 - Mapeamento e Gestao de Ecopontos.
+App mobile do EcoFilter desenvolvido com React Native (Expo), implementando F1 - Mapeamento e Gestao de Ecopontos e F3 - Classificacao de residuos por imagem (usando a camera do celular).
 
 ## Funcionalidades
 
+### F1 - Ecopontos
 - **Tela Home**: Status de conexao com a API e navegacao principal
 - **Listar Ecopontos**: Lista todos os pontos de coleta com filtro por tipo de residuo
 - **Detalhes do Ecoponto**: Visualizacao completa com opcoes de editar e excluir
@@ -11,14 +12,20 @@ App mobile do EcoFilter desenvolvido com React Native (Expo), implementando a fu
 - **Editar Ecoponto**: Formulario para atualizar dados do ponto de coleta
 - **Excluir Ecoponto**: Exclusao com confirmacao via Alert
 
+### F3 - Classificacao por imagem
+- **Nova Classificacao**: Tira foto (ou escolhe da galeria) e envia o residuo para classificacao
+- **Classificacoes**: Historico das classificacoes com imagem, filtro por tipo e remocao
+
 ## Estrutura de Navegacao
 
 ```
 Home
-  └── Ecopontos (lista)
-        ├── DetalheEcoponto (detalhes + editar/excluir)
-        │     └── EditarEcoponto (formulario de edicao)
-        └── NovoEcoponto (formulario de criacao)
+  ├── Ecopontos (lista)                          [F1]
+  │     ├── DetalheEcoponto (detalhes + editar/excluir)
+  │     │     └── EditarEcoponto (formulario de edicao)
+  │     └── NovoEcoponto (formulario de criacao)
+  ├── NovaClassificacao (camera/galeria + resultado)   [F3]
+  └── Classificacoes (historico)                       [F3]
 ```
 
 ## Pre-requisitos
@@ -30,18 +37,9 @@ Home
 
 ## Configuracao da API
 
-Edite o arquivo `src/config.js` com o IP do seu computador na rede local:
+O arquivo `src/config.js` **detecta automaticamente** o IP do computador em desenvolvimento (Expo Go): reaproveita o endereco usado pelo celular para acessar o Metro bundler e monta a URL da API (`http://<ip>:8000`). Ao trocar de rede Wi-Fi, nao e preciso editar nada.
 
-```javascript
-// Para dispositivo fisico na mesma rede Wi-Fi:
-export const API_URL = 'http://192.168.x.x:8000';
-
-// Para emulador Android:
-export const API_URL = 'http://10.0.2.2:8000';
-
-// Para iOS Simulator:
-export const API_URL = 'http://localhost:8000';
-```
+Se a deteccao falhar (ex: build de producao), ajuste o valor de `API_URL_FALLBACK` dentro do `config.js`. O backend precisa estar acessivel na porta 8000.
 
 ## Como executar
 
