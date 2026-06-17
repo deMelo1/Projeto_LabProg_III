@@ -24,6 +24,15 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "plugins": [
+      [
+        "expo-image-picker",
+        {
+          "cameraPermission": "O EcoFilter usa a camera para tirar foto do residuo e classifica-lo.",
+          "photosPermission": "O EcoFilter acessa suas fotos para classificar imagens de residuos."
+        }
+      ]
+    ]
   }
 }

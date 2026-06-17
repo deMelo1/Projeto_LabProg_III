@@ -35,6 +35,22 @@ export default function HomeScreen({ navigation }) {
         <Text style={styles.buttonText}>Ecopontos</Text>
         <Text style={styles.buttonDesc}>Gerenciar pontos de coleta</Text>
       </TouchableOpacity>
+
+      <TouchableOpacity
+        style={[styles.button, styles.buttonSpacing]}
+        onPress={() => navigation.navigate('NovaClassificacao')}
+      >
+        <Text style={styles.buttonText}>Classificar Residuo</Text>
+        <Text style={styles.buttonDesc}>Tirar foto e identificar o tipo</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={[styles.button, styles.buttonSpacing]}
+        onPress={() => navigation.navigate('Classificacoes')}
+      >
+        <Text style={styles.buttonText}>Historico</Text>
+        <Text style={styles.buttonDesc}>Ver classificacoes anteriores</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -75,6 +91,9 @@ const styles = StyleSheet.create({
     padding: 20,
     borderRadius: 12,
     alignItems: 'center',
+  },
+  buttonSpacing: {
+    marginTop: 14,
   },
   buttonText: {
     color: '#fff',

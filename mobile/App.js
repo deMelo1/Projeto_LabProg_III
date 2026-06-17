@@ -7,6 +7,8 @@ import EcopontosScreen from './src/screens/EcopontosScreen';
 import DetalheEcopontoScreen from './src/screens/DetalheEcopontoScreen';
 import NovoEcopontoScreen from './src/screens/NovoEcopontoScreen';
 import EditarEcopontoScreen from './src/screens/EditarEcopontoScreen';
+import NovaClassificacaoScreen from './src/screens/NovaClassificacaoScreen';
+import ClassificacoesScreen from './src/screens/ClassificacoesScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -45,6 +47,16 @@ export default function App() {
           name="EditarEcoponto"
           component={EditarEcopontoScreen}
           options={{ title: 'Editar Ecoponto' }}
+        />
+        <Stack.Screen
+          name="NovaClassificacao"
+          component={NovaClassificacaoScreen}
+          options={{ title: 'Classificar Residuo' }}
+        />
+        <Stack.Screen
+          name="Classificacoes"
+          component={ClassificacoesScreen}
+          options={{ title: 'Historico de Classificacoes' }}
         />
       </Stack.Navigator>
     </NavigationContainer>
