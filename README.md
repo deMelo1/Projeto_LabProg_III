@@ -292,7 +292,7 @@ Todos os dados são persistidos no PostgreSQL e sobrevivem a reinicializações 
 
 ---
 
-## Mobile (Entregável 10)
+## Mobile
 
 O app mobile foi desenvolvido com **React Native (Expo)** e implementa **F1 — Mapeamento e gestão de ecopontos** e **F3 — Classificação de resíduos por imagem** (usando a câmera do celular como diferencial), consumindo a mesma API do backend.
 
@@ -384,6 +384,8 @@ npx expo start
 | `19_mobile_novo_ecoponto.jpeg`       | Formulário de cadastro no app                     |
 | `20_mobile_detalhe_ecoponto.jpeg`    | Detalhes de um ecoponto no app                    |
 | `21_mobile_editar_ecoponto.jpeg`     | Formulário de edição no app                       |
+| `22_mobile_nova_classificacao.jpeg`  | Tela de classificação de resíduo por imagem (F3)  |
+| `23_mobile_classificacoes.jpeg`      | Histórico de classificações no app (F3)           |
 
 ---
 
